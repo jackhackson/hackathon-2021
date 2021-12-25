@@ -1,0 +1,43 @@
+create tag goodsinfo(
+                                          GoodsName string, --商品名
+			Price float,              --基准价
+			Category string,     --商品类别
+			Brand string,          --品牌
+			Vendor string)        --商品厂商
+create tag saleunit(
+			SaleTime string ,    --销售时间
+			SaleHour int,          --小时
+			SaleWeek int,         --周
+			SaleWeather string, --天气
+			SaleHoliday string,  --节日
+			IsMember int)          --会员
+create edge salegoods(
+SaleQty float, --数量
+SaleAmount float,--金额
+SalePrice float,--售价
+IsPromo int)  --活动
+
+
+create edge goodssale(
+SaleQty float, --数量
+SaleAmount float, ,--金额
+SalePrice float, --售价
+IsPromo int) --活动
+
+
+$var1 = match (v:goodsinfo) return id(v) as id1 
+| go from $-.id1 over goodssale 
+where   left(dst(edge),8)>='20211001'
+yield $-.id1 as id2,dst(edge) as dhold
+| group by $-.id2  
+yield $-.id2 as id,count(*) as dh 
+| go from $-.id over goodssale    
+yield $-.id as oldid,$-.dh as dh1,dst(edge) as idnew  
+| go from $-.idnew over salegoods  
+where $-.oldid!=dst(edge)  and  left(src(edge),8)>='20211001'
+YIELD $-.oldid  as oldid1,$-.dh1 as dh2,dst(edge) as goodsid   
+| group by $-.oldid1,$-.dh2,$-.goodsid  
+YIELD $-.oldid1 as oldid11 ,$-.dh2 as dh3,$-.goodsid as goodsid11,count(*) as count11 ;
+
+yield $var1.oldid11,$var1.dh3,$var1.goodsid11,$var1.count11 
+where toFloat($var1.count11)/toFloat($var1.dh3) > 0.5 and $var1.count11> 10

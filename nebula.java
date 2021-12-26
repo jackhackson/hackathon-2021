@@ -43,7 +43,7 @@ public class nebula {
 
 	private String  doAudioData(String audioData) {
 		String gnql="";
-		return gnql;
+		return getData(gnql);
 		// ��ʼд��־
 	}
 	private String  getData(String ngql) {

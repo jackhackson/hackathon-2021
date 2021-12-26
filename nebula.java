@@ -31,8 +31,8 @@ public class nebula {
 	
 
 	public String donebula(String audioData, String userNo, String ipAddr, String timestamp, String appid,String md5) {
-
-      return doAudioData(audioData);
+                String gnsql=doAudioData(audioData);
+                 return getData(gnsql);
 
 
 	}
@@ -43,7 +43,7 @@ public class nebula {
 
 	private String  doAudioData(String audioData) {
 		String gnql="";
-		return getData(gnql);
+		return gnql;
 		// ��ʼд��־
 	}
 	private String  getData(String ngql) {
